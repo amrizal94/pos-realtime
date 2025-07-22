@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Menu Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .menu-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .menu-item {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+
+        .menu-item.unavailable {
+            opacity: 0.6;
+            border-color: #ccc;
+        }
+
+        .menu-item-image {
+            width: 100%;
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .menu-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .menu-item-image.no-image {
+            background: #e9ecef;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .menu-item-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .menu-item-category {
+            background: #e7f3ff;
+            color: #0066cc;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .menu-item-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .menu-item-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        .menu-item-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .close {
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .no-items {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .menu-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍽️ Menu Management</h1>
+            <p>Kelola menu restoran dengan mudah</p>
+        </div>
+
+        <div class="content">
+            <div class="menu-controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Cari menu..." />
+                </div>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    ➕ Tambah Menu
+                </button>
+            </div>
+
+            <div id="menuContainer" class="loading">
+                Loading menu items...
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="menuModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Tambah Menu</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="menuForm">
+                <input type="hidden" id="menuId" />
+                
+                <div class="form-group">
+                    <label for="menuName">Nama Menu *</label>
+                    <input type="text" id="menuName" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="menuDescription">Deskripsi</label>
+                    <textarea id="menuDescription" placeholder="Deskripsi menu..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="menuPrice">Harga *</label>
+                    <input type="number" id="menuPrice" min="0" step="1000" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="menuCategory">Kategori *</label>
+                    <select id="menuCategory" required>
+                        <option value="">Pilih Kategori</option>
+                        <option value="Main Course">Main Course</option>
+                        <option value="Beverage">Beverage</option>
+                        <option value="Snack">Snack</option>
+                        <option value="Dessert">Dessert</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="menuImage">URL Gambar</label>
+                    <input type="url" id="menuImage" placeholder="https://example.com/image.jpg" />
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="menuAvailable" checked />
+                        <label for="menuAvailable">Tersedia</label>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn" onclick="closeModal()">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let menuItems = [];
+        let editingId = null;
+
+        // Load menu items
+        async function loadMenuItems() {
+            try {
+                const response = await fetch('/api/admin/menu');
+                menuItems = await response.json();
+                renderMenuItems();
+            } catch (error) {
+                console.error('Error loading menu:', error);
+                document.getElementById('menuContainer').innerHTML = 
+                    '<div class="no-items">Error loading menu items</div>';
+            }
+        }
+
+        // Render menu items
+        function renderMenuItems() {
+            const container = document.getElementById('menuContainer');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filteredItems = menuItems.filter(item => 
+                item.name.toLowerCase().includes(searchTerm) ||
+                item.category.toLowerCase().includes(searchTerm) ||
+                (item.description && item.description.toLowerCase().includes(searchTerm))
+            );
+
+            if (filteredItems.length === 0) {
+                container.innerHTML = '<div class="no-items">Tidak ada menu yang ditemukan</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="menu-grid">
+                    ${filteredItems.map(item => `
+                        <div class="menu-item ${!item.available ? 'unavailable' : ''}">
+                            <div class="menu-item-image ${!item.image_url ? 'no-image' : ''}">
+                                ${item.image_url ? 
+                                    `<img src="${item.image_url}" alt="${item.name}" onerror="this.parentElement.innerHTML='<span>Gambar tidak tersedia</span>'" />` :
+                                    '<span>Tidak ada gambar</span>'
+                                }
+                            </div>
+                            <div class="menu-item-category">${item.category}</div>
+                            <div class="menu-item-title">${item.name}</div>
+                            <div class="menu-item-description">${item.description || 'Tidak ada deskripsi'}</div>
+                            <div class="menu-item-price">Rp ${item.price.toLocaleString('id-ID')}</div>
+                            <div class="menu-item-actions">
+                                <button class="btn btn-sm ${item.available ? 'btn-warning' : 'btn-success'}" 
+                                        onclick="toggleAvailability(${item.id})">
+                                    ${item.available ? '🚫 Nonaktifkan' : '✅ Aktifkan'}
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="editMenuItem(${item.id})">
+                                    ✏️ Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteMenuItem(${item.id})">
+                                    🗑️ Hapus
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Open add modal
+        function openAddModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Tambah Menu';
+            document.getElementById('menuForm').reset();
+            document.getElementById('menuAvailable').checked = true;
+            document.getElementById('menuModal').style.display = 'block';
+        }
+
+        // Edit menu item
+        function editMenuItem(id) {
+            const item = menuItems.find(m => m.id === id);
+            if (!item) return;
+
+            editingId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Menu';
+            document.getElementById('menuId').value = item.id;
+            document.getElementById('menuName').value = item.name;
+            document.getElementById('menuDescription').value = item.description || '';
+            document.getElementById('menuPrice').value = item.price;
+            document.getElementById('menuCategory').value = item.category;
+            document.getElementById('menuImage').value = item.image_url || '';
+            document.getElementById('menuAvailable').checked = !!item.available;
+            document.getElementById('menuModal').style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('menuModal').style.display = 'none';
+            editingId = null;
+        }
+
+        // Toggle availability
+        async function toggleAvailability(id) {
+            try {
+                const response = await fetch(`/api/admin/menu/${id}/toggle`, {
+                    method: 'PATCH'
+                });
+                
+                if (response.ok) {
+                    await loadMenuItems();
+                } else {
+                    alert('Gagal mengubah status menu');
+                }
+            } catch (error) {
+                console.error('Error toggling availability:', error);
+                alert('Terjadi kesalahan');
+            }
+        }
+
+        // Delete menu item
+        async function deleteMenuItem(id) {
+            if (!confirm('Apakah Anda yakin ingin menghapus menu ini?')) return;
+
+            try {
+                const response = await fetch(`/api/admin/menu/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    await loadMenuItems();
+                } else {
+                    alert('Gagal menghapus menu');
+                }
+            } catch (error) {
+                console.error('Error deleting menu:', error);
+                alert('Terjadi kesalahan');
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('menuForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                name: document.getElementById('menuName').value,
+                description: document.getElementById('menuDescription').value,
+                price: parseFloat(document.getElementById('menuPrice').value),
+                category: document.getElementById('menuCategory').value,
+                image_url: document.getElementById('menuImage').value,
+                available: document.getElementById('menuAvailable').checked
+            };
+
+            try {
+                let response;
+                if (editingId) {
+                    response = await fetch(`/api/admin/menu/${editingId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                } else {
+                    response = await fetch('/api/admin/menu', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                }
+
+                if (response.ok) {
+                    closeModal();
+                    await loadMenuItems();
+                } else {
+                    alert('Gagal menyimpan menu');
+                }
+            } catch (error) {
+                console.error('Error saving menu:', error);
+                alert('Terjadi kesalahan');
+            }
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', renderMenuItems);
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('menuModal')) {
+                closeModal();
+            }
+        });
+
+        // Load menu items on page load
+        loadMenuItems();
+    </script>
+</body>
+</html>

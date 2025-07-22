@@ -1,0 +1,27 @@
+{
+  "name": "pos-realtime",
+  "version": "1.0.0",
+  "description": "Real-time POS system with QR code ordering",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "nodemon server/index.js",
+    "client": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "qrcode": "^1.5.3",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.8.1",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "nodemon": "^3.0.1",
+    "vite": "^4.4.5"
+  }
+}
