@@ -8,15 +8,26 @@
 </head>
 <body class="bg-gray-100">
   <div id="app">
-    <nav class="bg-blue-600 text-white p-4">
+    <nav class="bg-blue-600 text-white p-4" id="main-navbar">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-xl font-bold">POS Real-time</h1>
-        <div class="space-x-4">
+        <div class="flex items-center space-x-4" id="nav-menu">
           <a href="/" class="hover:underline">Home</a>
           <a href="/order" class="hover:underline">Order</a>
           <a href="/cashier" class="hover:underline">Cashier</a>
           <a href="/kitchen" class="hover:underline">Kitchen</a>
           <a href="/admin" class="hover:underline">Admin</a>
+          <div id="user-info" class="hidden flex items-center space-x-2">
+            <span id="user-name" class="text-sm"></span>
+            <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-sm">
+              Logout
+            </button>
+          </div>
+          <div id="login-info" class="flex items-center space-x-2">
+            <a href="/login" class="bg-green-500 hover:bg-green-600 px-3 py-1 rounded text-sm">
+              Login
+            </a>
+          </div>
         </div>
       </div>
     </nav>
@@ -26,6 +37,14 @@
     </main>
   </div>
 
+  <script>
+    // Hide navbar for table customers (QR code users)
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableParam = urlParams.get('t'); // Check for 't' parameter from QR code
+    if (tableParam) {
+      document.getElementById('main-navbar').style.display = 'none';
+    }
+  </script>
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
